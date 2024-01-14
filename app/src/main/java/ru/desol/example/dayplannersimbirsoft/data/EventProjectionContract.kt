@@ -16,6 +16,7 @@ object EventProjectionContract {
         CalendarContract.Events.RRULE,
         CalendarContract.Events.DISPLAY_COLOR,
         CalendarContract.Events.VISIBLE,
+        CalendarContract.Events.DESCRIPTION,
     )
     const val PROJECTION_TITLE_INDEX = 1
     const val PROJECTION_EVENT_LOCATION_INDEX = 2
@@ -28,4 +29,5 @@ object EventProjectionContract {
     const val PROJECTION_RRULE_INDEX = 9
     const val PROJECTION_DISPLAY_COLOR_INDEX = 10
     const val PROJECTION_VISIBLE_INDEX_EVENT = 11
+    const val PROJECTION_DESCRIPTION = 12
 }

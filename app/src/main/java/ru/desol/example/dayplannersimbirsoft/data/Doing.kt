@@ -5,7 +5,7 @@ import java.sql.Timestamp
 
 data class Doing(
     @Json(name = "id")
-    val id: Int,
+    val id: Long,
 
     @Json(name = "date_start")
     val dateStart: Timestamp,
