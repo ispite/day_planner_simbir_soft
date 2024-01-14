@@ -72,4 +72,7 @@ dependencies {
 
     // Logging
     implementation("com.jakewharton.timber:timber:5.0.1")
+
+    val activityVersion = "1.8.2"
+    implementation("androidx.activity:activity-ktx:$activityVersion")
 }

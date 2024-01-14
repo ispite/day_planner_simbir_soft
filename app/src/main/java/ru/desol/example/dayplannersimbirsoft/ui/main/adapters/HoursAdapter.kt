@@ -5,24 +5,33 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.desol.example.dayplannersimbirsoft.data.Hour
 import ru.desol.example.dayplannersimbirsoft.databinding.ItemOneHourBinding
 import ru.desol.example.dayplannersimbirsoft.utils.inflate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class HoursAdapter : RecyclerView.Adapter<HoursAdapter.HourViewHolder>() {
 
-    private var hourList: List<Hour> = emptyList()
+    private var fullDay: MutableList<Hour> = MutableList(24) { Hour(it, "Title: $it", true) }
 
-    fun submitList(hourList: List<Hour>) {
-        this.hourList = hourList
-        notifyDataSetChanged()
-    }
+    private val currentTime = System.currentTimeMillis()
+
+//    fun clearList() {
+//        fullDay.clear()
+//        notifyDataSetChanged()
+//    }
+
+//    fun submitList(hourList: List<Hour>) {
+//        this.hourList = hourList
+//        notifyDataSetChanged()
+//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourViewHolder {
         return HourViewHolder(parent.inflate(ItemOneHourBinding::inflate))
     }
 
-    override fun getItemCount(): Int = hourList.size
+    override fun getItemCount(): Int = fullDay.size
 
     override fun onBindViewHolder(holder: HourViewHolder, position: Int) {
-        val currentHour = hourList[position]
+        val currentHour = fullDay[position]
         holder.bind(currentHour)
     }
 
@@ -31,9 +40,16 @@ class HoursAdapter : RecyclerView.Adapter<HoursAdapter.HourViewHolder>() {
 
         fun bind(item: Hour) {
             with(binding) {
-                hourTextView.text = item.id.toString()
-                titleTextView.text = item.title
+                hourTextView.text = getTimeInterval(item.id)
             }
+        }
+
+        private fun getTimeInterval(itemId: Int): String {
+            val formatter = DateTimeFormatter.ofPattern("HH.mm")
+            val hour = LocalTime.of(itemId, 0).format(formatter)
+            val nextId = if (itemId < 23) itemId + 1 else 0
+            val nextHour = LocalTime.of(nextId, 0).format(formatter)
+            return "$hour-$nextHour"
         }
     }
 }
