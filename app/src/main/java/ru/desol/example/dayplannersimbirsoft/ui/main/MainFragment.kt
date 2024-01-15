@@ -50,7 +50,6 @@ import ru.desol.example.dayplannersimbirsoft.utils.toast
 import timber.log.Timber
 import java.sql.Timestamp
 import java.time.LocalDate
-import java.time.OffsetTime
 import java.time.ZoneOffset
 
 
@@ -109,18 +108,21 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         binding.calendar.setOnDateChangeListener { calendarView, year, month, day ->
 //            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
             val date = LocalDate.of(year, month + 1, day).atStartOfDay()
-            val dateEnd = LocalDate.of(year, month + 1, day+1).atStartOfDay()
-            val timeInMilliseconds = date.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
+            val dateEnd = LocalDate.of(year, month + 1, day + 1).atStartOfDay()
+            val UTC = date.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
+            val timeInMilliseconds = date.atOffset(ZoneOffset.ofHours(3)).toInstant().toEpochMilli()
             val timeInMillisecondsEnd = dateEnd.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
 //            Timber.d("Date in milli :: FOR API >= 26 >>> $timeInMilliseconds")
             // TODO получить текущую дату и события к ней
             val todayTimestamp = Timestamp(timeInMilliseconds)
             val tomorrowTimestamp = Timestamp(timeInMillisecondsEnd)
-//            Timber.d("year =$year month =$month day =$day timeInMilliseconds =$timeInMilliseconds")
+            Timber.d("year =$year month =$month day =$day timeInMilliseconds =$timeInMilliseconds UTC =$UTC ")
 //            Timber.d("timeInMillisecondsEnd =$timeInMillisecondsEnd")
 //            todoList.map { it.dateStart }
             // TODO подозрительное решение
+//            Timber.d("Пгшлр")
             val newList = todoList.filter { it.dateStart in todayTimestamp..tomorrowTimestamp }
+            newList.forEach { Timber.d("it.dateStart =${it.dateStart.time}") }
             Timber.d("newList =$newList")
 
         }
@@ -178,12 +180,12 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private fun getEvents() {
 
-//        val selectionArgs = calendarItems.value?.map { it.id.toString() }?.toTypedArray()
-        val selectionArgs = arrayOf("3")
+        val selectionArgs = calendarItems.value?.map { it.id.toString() }?.toTypedArray()
+//        val selectionArgs = arrayOf("3")
         val uri = CalendarContract.Events.CONTENT_URI
-        val selection = "(${CalendarContract.Events.CALENDAR_ID} = ?)"
-//        val selection =
-//            "(${CalendarContract.Events.CALENDAR_ID} = ?) OR (${CalendarContract.Events.CALENDAR_ID} = ?) OR (${CalendarContract.Events.CALENDAR_ID} = ?)"
+//        val selection = "(${CalendarContract.Events.CALENDAR_ID} = ?)"
+        val selection =
+            "(${CalendarContract.Events.CALENDAR_ID} = ?) OR (${CalendarContract.Events.CALENDAR_ID} = ?) OR (${CalendarContract.Events.CALENDAR_ID} = ?)"
         val cur = requireActivity().contentResolver.query(
             uri,
             EVENT_PROJECTION,
