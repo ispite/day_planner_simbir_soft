@@ -1,6 +1,7 @@
 package ru.desol.example.dayplannersimbirsoft.ui.main.adapters
 
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.desol.example.dayplannersimbirsoft.data.Hour
 import ru.desol.example.dayplannersimbirsoft.databinding.ItemOneHourBinding
@@ -39,8 +40,13 @@ class HoursAdapter : RecyclerView.Adapter<HoursAdapter.HourViewHolder>() {
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Hour) {
+            val doingAdapter = DoingAdapter()
+
             with(binding) {
                 hourTextView.text = getTimeInterval(item.id)
+                doingRecyclerView.layoutManager =
+                    LinearLayoutManager(binding.root.context, LinearLayoutManager.VERTICAL, false)
+                doingRecyclerView.adapter = doingAdapter
             }
         }
 
