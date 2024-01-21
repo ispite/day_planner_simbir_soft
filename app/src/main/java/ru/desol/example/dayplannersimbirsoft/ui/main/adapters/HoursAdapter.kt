@@ -10,7 +10,9 @@ import ru.desol.example.dayplannersimbirsoft.utils.inflate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-class HoursAdapter : RecyclerView.Adapter<HoursAdapter.HourViewHolder>() {
+class HoursAdapter(
+    private val onDoingClick: (Doing) -> Unit
+) : RecyclerView.Adapter<HoursAdapter.HourViewHolder>() {
 
     //    private var fullDay: MutableList<Hour> = MutableList(24) { Hour(it, "Title: $it", true) }
     private val fullDay: MutableList<Hour> = mutableListOf()
@@ -29,7 +31,7 @@ class HoursAdapter : RecyclerView.Adapter<HoursAdapter.HourViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourViewHolder {
-        return HourViewHolder(parent.inflate(ItemOneHourBinding::inflate))
+        return HourViewHolder(parent.inflate(ItemOneHourBinding::inflate), onDoingClick)
     }
 
     override fun getItemCount(): Int = fullDay.size
@@ -39,12 +41,14 @@ class HoursAdapter : RecyclerView.Adapter<HoursAdapter.HourViewHolder>() {
         holder.bind(currentHour)
     }
 
-    class HourViewHolder(private val binding: ItemOneHourBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class HourViewHolder(
+        private val binding: ItemOneHourBinding,
+        private val onDoingClick: (Doing) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Hour) {
-            val doingAdapter = DoingAdapter()
-            doingAdapter.submitList(item.doingsInHour?: emptyList())
+            val doingAdapter = DoingAdapter() { onDoingClick }
+            doingAdapter.submitList(item.doingsInHour ?: emptyList())
 
             with(binding) {
                 hourTextView.text = getTimeInterval(item.id)

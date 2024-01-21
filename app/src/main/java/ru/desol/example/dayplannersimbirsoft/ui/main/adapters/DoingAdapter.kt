@@ -6,7 +6,9 @@ import ru.desol.example.dayplannersimbirsoft.data.Doing
 import ru.desol.example.dayplannersimbirsoft.databinding.ItemDoingBinding
 import ru.desol.example.dayplannersimbirsoft.utils.inflate
 
-class DoingAdapter : RecyclerView.Adapter<DoingAdapter.DoingViewHolder>() {
+class DoingAdapter(
+    private val onDoingClick: (Doing) -> Unit
+) : RecyclerView.Adapter<DoingAdapter.DoingViewHolder>() {
 
     private val doings = mutableListOf<Doing>()
 
@@ -17,7 +19,7 @@ class DoingAdapter : RecyclerView.Adapter<DoingAdapter.DoingViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DoingViewHolder {
-        return DoingViewHolder(parent.inflate(ItemDoingBinding::inflate))
+        return DoingViewHolder(parent.inflate(ItemDoingBinding::inflate), onDoingClick)
     }
 
     override fun getItemCount(): Int = doings.size
@@ -28,8 +30,18 @@ class DoingAdapter : RecyclerView.Adapter<DoingAdapter.DoingViewHolder>() {
     }
 
 
-    class DoingViewHolder(private val binding: ItemDoingBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class DoingViewHolder(
+        private val binding: ItemDoingBinding,
+        private val onDoingClick: (Doing) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+        private var doing: Doing? = null
+
+        init {
+            binding.root.setOnClickListener {
+                doing?.let { onDoingClick(it) }
+            }
+        }
+
         fun bind(item: Doing) {
             with(binding) {
                 titleDoing.text = item.name

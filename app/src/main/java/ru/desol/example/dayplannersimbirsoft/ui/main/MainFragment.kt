@@ -97,7 +97,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     }
 
     private fun setupRecyclerView() {
-        hoursAdapter = HoursAdapter()
+        hoursAdapter = HoursAdapter() { toDetailDoing(it) }
         with(binding.todoRecyclerView) {
             adapter = hoursAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -233,6 +233,11 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         } else {
             requestPermissionLauncher?.launch(Manifest.permission.READ_CALENDAR)
         }
+    }
+
+    // TODO доделать переход
+    private fun toDetailDoing(doing: Doing) {
+
     }
 
     private fun getCalendars() {
