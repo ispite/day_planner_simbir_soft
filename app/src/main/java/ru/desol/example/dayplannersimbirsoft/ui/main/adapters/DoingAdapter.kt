@@ -8,7 +8,13 @@ import ru.desol.example.dayplannersimbirsoft.utils.inflate
 
 class DoingAdapter : RecyclerView.Adapter<DoingAdapter.DoingViewHolder>() {
 
-    val doings = mutableListOf<Doing>()
+    private val doings = mutableListOf<Doing>()
+
+    fun submitList(doings: List<Doing>) {
+        this.doings.clear()
+        this.doings.addAll(doings)
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DoingViewHolder {
         return DoingViewHolder(parent.inflate(ItemDoingBinding::inflate))
