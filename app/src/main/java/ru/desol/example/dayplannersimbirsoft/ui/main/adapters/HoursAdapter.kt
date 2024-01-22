@@ -14,10 +14,7 @@ class HoursAdapter(
     private val onDoingClick: (Doing) -> Unit
 ) : RecyclerView.Adapter<HoursAdapter.HourViewHolder>() {
 
-    //    private var fullDay: MutableList<Hour> = MutableList(24) { Hour(it, "Title: $it", true) }
     private val fullDay: MutableList<Hour> = mutableListOf()
-
-//    private val currentTime = System.currentTimeMillis()
 
     fun clearList() {
         fullDay.clear()

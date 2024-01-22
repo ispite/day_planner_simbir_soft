@@ -49,7 +49,6 @@ import ru.desol.example.dayplannersimbirsoft.databinding.FragmentMainBinding
 import ru.desol.example.dayplannersimbirsoft.ui.main.adapters.HoursAdapter
 import ru.desol.example.dayplannersimbirsoft.utils.map
 import ru.desol.example.dayplannersimbirsoft.utils.toast
-import timber.log.Timber
 import java.sql.Timestamp
 import java.time.Instant
 import java.time.LocalDate
@@ -61,11 +60,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private val binding: FragmentMainBinding by viewBinding(CreateMethod.INFLATE)
 
-    // Todo lateinit или nullable?
-//    private var hoursAdapter: HoursAdapter? = null
     private lateinit var hoursAdapter: HoursAdapter
-
-//    private lateinit var calendarItemAdapter: CalendarItemAdapter
 
     private val calendarItems = MutableLiveData<List<CalendarItem>?>()
     private val todoList = mutableListOf<Doing>()
@@ -85,7 +80,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         savedInstanceState: Bundle?
     ): View {
 
-//        getEvents()
         setupObservers()
 
         setupRecyclerView()
@@ -108,83 +102,37 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private fun setupObservers() {
         calendarItems.observe(viewLifecycleOwner) {
-            getEvents()
+            it?.let { getEvents(it) }
             setToday()
         }
     }
 
-    val second = 1000
 
     private fun setToday() {
         val oneDay = 1000 * 60 * 60 * 24
         val today = binding.calendar.date
-//        val asd = binding.calendar.dateTextAppearance
-
-//        val todayTimestamp = Timestamp(today)
         val instant = Instant.ofEpochMilli(today)
         val todayDate =
             instant.atZone(TimeZone.getDefault().toZoneId()).toLocalDate().atStartOfDay()
         val todayMillis = todayDate.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
         val tomorrowMillis = todayMillis + oneDay
-//        val todayMillis = todayDate.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
 
-        Timber.d("today =$today todayMillis =$todayMillis")
-
-//        val date = LocalDate.of(year, month + 1, day).atStartOfDay()
-//        val dateEnd = LocalDate.of(year, month + 1, day + 1).atStartOfDay()
-//        val timeInMilliseconds = date.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
-//        val timeInMillisecondsEnd = dateEnd.atOffset(ZoneOffset.UTC).toInstant()
-//            .toEpochMilli() //- second // отнимаю секунду
-//            Timber.d("Date in milli :: FOR API >= 26 >>> $timeInMilliseconds")
-        // TODO получить текущую дату и события к ней
         val todayTimestamp = Timestamp(todayMillis)
         val tomorrowTimestamp = Timestamp(tomorrowMillis)
-        Timber.d("todayMillis =$todayMillis tomorrowMillis =$tomorrowMillis")
-//            Timber.d("timeInMillisecondsEnd =$timeInMillisecondsEnd")
-//            todoList.map { it.dateStart }
-        // TODO подозрительное решение
-//        val newList = todoList.filter {
-//                Timber.d("dateStart =${it.dateStart.time}")
-////                it.dateStart in todayTimestamp..tomorrowTimestamp
-////                it.dateStart in todayTimestamp..tomorrowTimestamp
-//            it.dateStart >= todayTimestamp && it.dateStart < tomorrowTimestamp
-//        }
-////            Timber.d("dateStart =${it.dateStart.time}")
-//        newList.forEach { Timber.d("dateStart =${it.dateStart} millis =${it.dateStart.time}") }
-//        Timber.d("newList =$newList")
-//        val hoursList = fillDay(todayTimestamp, newList)
-//        hoursAdapter.submitList(hoursList)
 
         fillRecyclerView(todayTimestamp, tomorrowTimestamp)
     }
 
     private fun setupListeners() {
         binding.calendar.setOnDateChangeListener { calendarView, year, month, day ->
-//            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
             val date = LocalDate.of(year, month + 1, day).atStartOfDay()
             val dateEnd = LocalDate.of(year, month + 1, day + 1).atStartOfDay()
             val timeInMilliseconds = date.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
             val timeInMillisecondsEnd = dateEnd.atOffset(ZoneOffset.UTC).toInstant()
-                .toEpochMilli() //- second // отнимаю секунду
-//            Timber.d("Date in milli :: FOR API >= 26 >>> $timeInMilliseconds")
-            // TODO получить текущую дату и события к ней
+                .toEpochMilli()
+
             val todayTimestamp = Timestamp(timeInMilliseconds)
             val tomorrowTimestamp = Timestamp(timeInMillisecondsEnd)
-            Timber.d("year =$year month =$month day =$day timeInMilliseconds =$timeInMilliseconds")
-//            Timber.d("timeInMillisecondsEnd =$timeInMillisecondsEnd")
-//            todoList.map { it.dateStart }
-            // TODO подозрительное решение
-//            val newList = todoList.filter {
-////                Timber.d("dateStart =${it.dateStart.time}")
-////                it.dateStart in todayTimestamp..tomorrowTimestamp
-////                it.dateStart in todayTimestamp..tomorrowTimestamp
-//                it.dateStart >= todayTimestamp && it.dateStart < tomorrowTimestamp
-//            }
-////            Timber.d("dateStart =${it.dateStart.time}")
-//            newList.forEach { Timber.d("dateStart =${it.dateStart} millis =${it.dateStart.time}") }
-//            Timber.d("newList =$newList")
-//            val hoursList = fillDay(todayTimestamp, newList)
-//            hoursAdapter.submitList(hoursList)
 
             fillRecyclerView(todayTimestamp, tomorrowTimestamp)
         }
@@ -201,7 +149,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 if ((hour) <= doing.dateStart.time &&
                     doing.dateStart.time < (nextHour)
                 ) {
-                    Timber.d("doing =${doing.dateStart.time} hour =$hour nextHour =$nextHour")
                     doingsInHour.add(doing)
                 }
 
@@ -213,12 +160,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private fun fillRecyclerView(todayTimestamp: Timestamp, tomorrowTimestamp: Timestamp) {
         val newList = todoList.filter {
-            Timber.d("dateStart =${it.dateStart.time}")
             it.dateStart >= todayTimestamp && it.dateStart < tomorrowTimestamp
         }
-//            Timber.d("dateStart =${it.dateStart.time}")
-        newList.forEach { Timber.d("dateStart =${it.dateStart} millis =${it.dateStart.time}") }
-        Timber.d("newList =$newList")
         val hoursList = fillDay(todayTimestamp, newList)
         hoursAdapter.submitList(hoursList)
     }
@@ -236,7 +179,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         }
     }
 
-    // TODO доделать переход
     private fun toDetailDoing(doing: Doing) {
         findNavController().navigate(
             MainFragmentDirections.actionMainFragmentToDoingDetailsFragment(doing)
@@ -276,18 +218,22 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             )
         }
         cur?.close()
-        newList?.forEach { Timber.d("calendars =$it") }
         calendarItems.postValue(newList)
     }
 
-    private fun getEvents() {
-        calendarItems.value?.forEach { Timber.d("calendarItem =$it") }
-        val selectionArgs = calendarItems.value?.map { it.id.toString() }?.toTypedArray()
-//        val selectionArgs = arrayOf("3")
+    private fun getEvents(calendarItems: List<CalendarItem>) {
+        val selectionArgs = calendarItems.map { it.id.toString() }.toTypedArray()
+        val size = calendarItems.size
         val uri = CalendarContract.Events.CONTENT_URI
-//        val selection = "(${CalendarContract.Events.CALENDAR_ID} = ?)"
-        val selection =
-            "(${CalendarContract.Events.CALENDAR_ID} = ?) OR (${CalendarContract.Events.CALENDAR_ID} = ?) OR (${CalendarContract.Events.CALENDAR_ID} = ?)"
+        val stringTemplate = "(${CalendarContract.Events.CALENDAR_ID} = ?)"
+        val or = " OR "
+
+        val sb = StringBuilder()
+        for (i in 0..<size) {
+            if (i == 0) sb.append(stringTemplate)
+            else sb.append(or).append(stringTemplate)
+        }
+        val selection = sb.toString()
         val cur = requireActivity().contentResolver.query(
             uri,
             EVENT_PROJECTION,
@@ -310,12 +256,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             val visible = cur.getIntOrNull(PROJECTION_VISIBLE_INDEX_EVENT) == 1
             val description = cur.getStringOrNull(PROJECTION_DESCRIPTION) ?: ""
 
-            Timber.d(
-                "eventId =$eventId title =$title eventLocation =$eventLocation" +
-                        "status =$status dtStart =$dtStart dtEnd =$dtEnd duration =$duration" +
-                        "allDay =$allDay availability =$availability rRule =$rRule " +
-                        "displayColor =$displayColor visible =$visible description =$description"
-            )
             val dateStart = Timestamp(dtStart ?: 0L)
             val dateFinish = Timestamp(dtEnd ?: 0L)
             Doing(

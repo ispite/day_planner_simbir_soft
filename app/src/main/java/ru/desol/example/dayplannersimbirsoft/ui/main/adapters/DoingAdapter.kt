@@ -5,7 +5,6 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.desol.example.dayplannersimbirsoft.data.Doing
 import ru.desol.example.dayplannersimbirsoft.databinding.ItemDoingBinding
 import ru.desol.example.dayplannersimbirsoft.utils.inflate
-import timber.log.Timber
 
 class DoingAdapter(
     private val onDoingClick: (Doing) -> Unit
@@ -29,7 +28,6 @@ class DoingAdapter(
         val currentDoing = doings[position]
         holder.bind(currentDoing)
     }
-
 
     class DoingViewHolder(
         private val binding: ItemDoingBinding,
