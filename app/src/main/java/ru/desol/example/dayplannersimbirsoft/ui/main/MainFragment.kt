@@ -15,6 +15,7 @@ import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -237,7 +238,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     // TODO доделать переход
     private fun toDetailDoing(doing: Doing) {
-
+        findNavController().navigate(
+            MainFragmentDirections.actionMainFragmentToDoingDetailsFragment(doing)
+        )
     }
 
     private fun getCalendars() {

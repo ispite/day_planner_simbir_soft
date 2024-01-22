@@ -47,7 +47,7 @@ class HoursAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Hour) {
-            val doingAdapter = DoingAdapter() { onDoingClick }
+            val doingAdapter = DoingAdapter() { onDoingClick(it) }
             doingAdapter.submitList(item.doingsInHour ?: emptyList())
 
             with(binding) {

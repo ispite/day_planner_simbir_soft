@@ -1,8 +1,11 @@
 package ru.desol.example.dayplannersimbirsoft.data
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
+import kotlinx.parcelize.Parcelize
 import java.sql.Timestamp
 
+@Parcelize
 data class Doing(
     @Json(name = "id")
     val id: Long,
@@ -18,4 +21,4 @@ data class Doing(
 
     @Json(name = "description")
     val description: String
-)
+) : Parcelable

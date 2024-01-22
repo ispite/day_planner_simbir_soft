@@ -9,5 +9,18 @@
         android:id="@+id/mainFragment"
         android:name="ru.desol.example.dayplannersimbirsoft.ui.main.MainFragment"
         android:label="MainFragment"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_mainFragment_to_doingDetailsFragment"
+            app:destination="@id/doingDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/doingDetailsFragment"
+        android:name="ru.desol.example.dayplannersimbirsoft.ui.doing.DoingDetailsFragment"
+        android:label="DoingDetailsFragment"
+        tools:layout="@layout/fragment_doing">
+        <argument
+            android:name="doing"
+            app:argType="ru.desol.example.dayplannersimbirsoft.data.Doing" />
+    </fragment>
 </navigation>
